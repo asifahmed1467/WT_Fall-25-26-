@@ -33,12 +33,12 @@
     }
 
     button {
-      width: 100%;
-      padding: 8px;
+      width: 30%;
+      padding: 10px;
       margin-top: 10px;
       background-color: #003366;
       color: white;
-      border-radius: 5px;
+      border-radius: 10px;
       cursor: pointer;
     }
 
@@ -68,16 +68,16 @@
   <h2>Student Registration</h2>
 
   <form onsubmit="return handleSubmit()">
-    <label for="name">Full Name:</label>
+    <label="name">Full Name:</label>
     <input type="text" id="name" />
 
-    <label for="email">Email:</label>
+    <label="email">Email:</label>
     <input type="email" id="email" />
 
-    <label for="password">Password:</label>
+    <label="password">Password:</label>
     <input type="password" id="password" />
 
-    <label for="confirmPassword">Confirm Password:</label>
+    <label="confirmPassword">Confirm Password:</label>
     <input type="password" id="confirmPassword" />
 
     <button type="submit">Register</button>
