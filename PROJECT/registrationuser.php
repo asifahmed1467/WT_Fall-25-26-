@@ -43,14 +43,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 <title>Registration Form</title>
 
 <style>
-body 
-{
+body {
     font-family: Arial;
-    background: #f2f2f2;
+    background:
+        linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)),
+        url("bg_rg.png");
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
+    padding-top: 60px;
 }
 .form-box 
 {
@@ -59,6 +65,7 @@ body
     width: 360px;
     border-radius: 8px;
     box-shadow: 0 0 10px gray;
+    margin-top: 100px;
 }
 h2 { text-align: center; }
 input, select 
