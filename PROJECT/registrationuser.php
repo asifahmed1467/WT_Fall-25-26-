@@ -75,7 +75,6 @@ body {
     width: 360px;
     border-radius: 8px;
     box-shadow: 0 0 10px gray;
-    margin-top: 50px;
 }
 h2 { text-align: center; }
 input, select {
@@ -105,9 +104,9 @@ button {
 
 <p class="error"><?php echo $msg; ?></p>
 
-<form method="post">
-    <input type="text" name="name" placeholder="Full Name" required>
-    <input type="text" name="email" placeholder="Email" required>
+<form method="post" autocomplete="off">
+    <input type="text" name="name" placeholder="Full Name" required value="">
+    <input type="text" name="email" placeholder="Email" required value="">
 
     <select name="division" id="division" onchange="loadDistricts()" required>
         <option value="">Select Division</option>
@@ -125,14 +124,14 @@ button {
         <option value="">Select District</option>
     </select>
 
-    <input type="date" name="dob" required>
-    <input type="text" name="phone" placeholder="Phone Number" required>
+    <input type="date" name="dob" required value="">
+    <input type="text" name="phone" placeholder="Phone Number" required value="">
 
-    <input type="password" name="password" placeholder="Password" required>
-    <input type="password" name="cpassword" placeholder="Confirm Password" required>
+    <input type="password" name="password" placeholder="Password" required value="" autocomplete="new-password">
+    <input type="password" name="cpassword" placeholder="Confirm Password" required value="" autocomplete="new-password">
 
-    <button type="submit">Register</button><br> <br>
-    <button type="submit">Login</button>
+    <button type="submit">Register</button><br><br>
+    <a href="loginuser.php"><button type="button">Login</button></a>
 </form>
 </div>
 
