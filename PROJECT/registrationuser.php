@@ -2,7 +2,6 @@
 include "db.php";
 
 $msg = "";
-$fetch = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") 
 {
@@ -43,16 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                 VALUES ('$name', '$email', '$division', '$district', '$dob', '$phone', '$hashPassword')";
 
         if (mysqli_query($conn, $sql)) {
-
-            $fetch = "
-            <b>Registered Data:</b><br>
-            Name: $name <br>
-            Email: $email <br>
-            Division: $division <br>
-            District: $district <br>
-            DOB: $dob <br>
-            Phone: $phone";
-
+            $msg = "Registration successful!";
         } else {
             $msg = "Database Error!";
         }
@@ -74,12 +64,10 @@ body {
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
-
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    padding-top: 60px;
 }
 .form-box {
     background: white;
@@ -87,7 +75,7 @@ body {
     width: 360px;
     border-radius: 8px;
     box-shadow: 0 0 10px gray;
-    margin-top: 100px;
+    margin-top: 50px;
 }
 h2 { text-align: center; }
 input, select {
@@ -105,11 +93,7 @@ button {
 .error {
     color: red;
     text-align: center;
-}
-.result {
-    margin-top: 15px;
-    padding: 10px;
-    background: #e8f5e9;
+    margin-bottom: 10px;
 }
 </style>
 </head>
@@ -122,36 +106,34 @@ button {
 <p class="error"><?php echo $msg; ?></p>
 
 <form method="post">
+    <input type="text" name="name" placeholder="Full Name" required>
+    <input type="text" name="email" placeholder="Email" required>
 
-<input type="text" name="name" placeholder="Full Name" required>
-<input type="text" name="email" placeholder="Email" required>
+    <select name="division" id="division" onchange="loadDistricts()" required>
+        <option value="">Select Division</option>
+        <option>Dhaka</option>
+        <option>Chattogram</option>
+        <option>Rajshahi</option>
+        <option>Khulna</option>
+        <option>Barishal</option>
+        <option>Sylhet</option>
+        <option>Rangpur</option>
+        <option>Mymensingh</option>
+    </select>
 
-<select name="division" id="division" onchange="loadDistricts()" required>
-    <option value="">Select Division</option>
-    <option>Dhaka</option>
-    <option>Chattogram</option>
-    <option>Rajshahi</option>
-    <option>Khulna</option>
-    <option>Barishal</option>
-    <option>Sylhet</option>
-    <option>Rangpur</option>
-    <option>Mymensingh</option>
-</select>
+    <select name="district" id="district" required>
+        <option value="">Select District</option>
+    </select>
 
-<select name="district" id="district" required>
-    <option value="">Select District</option>
-</select>
+    <input type="date" name="dob" required>
+    <input type="text" name="phone" placeholder="Phone Number" required>
 
-<input type="date" name="dob" required>
-<input type="text" name="phone" placeholder="Phone Number" required>
+    <input type="password" name="password" placeholder="Password" required>
+    <input type="password" name="cpassword" placeholder="Confirm Password" required>
 
-<input type="password" name="password" placeholder="Password" required>
-<input type="password" name="cpassword" placeholder="Confirm Password" required>
-
-<button type="submit">Register</button>
+    <button type="submit">Register</button><br> <br>
+    <button type="submit">Login</button>
 </form>
-
-<div class="result"><?php echo $fetch; ?></div>
 </div>
 
 <script>
@@ -159,10 +141,9 @@ function loadDistricts()
 {
     var division = document.getElementById("division").value;
     var districtBox = document.getElementById("district");
-
     districtBox.innerHTML = "<option value=''>Select District</option>";
-    var list = [];
 
+    var list = [];
     if (division == "Dhaka") {
         list = ["Dhaka","Gazipur","Narayanganj","Narsingdi","Tangail",
                 "Kishoreganj","Munshiganj","Manikganj","Faridpur",
@@ -198,8 +179,7 @@ function loadDistricts()
 
     for (var i = 0; i < list.length; i++) {
         var opt = document.createElement("option");
-        opt.value = list[i];
-        opt.text = list[i];
+        opt.value = opt.text = list[i];
         districtBox.add(opt);
     }
 }
