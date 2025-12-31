@@ -1,110 +1,69 @@
+<?php
+include "db.php";
+
+$msg = "";
+
+if ($_SERVER["REQUEST_METHOD"] == "POST")
+     {
+
+    $email    = trim($_POST["email"]);
+    $password = trim($_POST["password"]);
+
+    if (empty($email)) {
+        $msg = "Email cannot be empty";
+    }
+    else if (empty($password)) {
+        $msg = "Password cannot be empty";
+    }
+    else if (strpos($email, "@") === false || strpos($email, ".com") === false) {
+        $msg = "Email must contain @ and .com";
+    }
+    else {
+
+        $sql = "SELECT password FROM users WHERE email='$email'";
+        $result = mysqli_query($conn, $sql);
+
+        if (mysqli_num_rows($result) == 1) {
+            $row = mysqli_fetch_assoc($result);
+            if (password_verify($password, $row["password"])) {
+                $msg = "Login successful!";
+            } else {
+                $msg = "Incorrect email or password";
+            }
+        } else {
+            $msg = "Incorrect email or password";
+        }
+    }
+}
+?>
+
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    
-    <title>Login Form</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f6f8;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
-        .login {
-            background: #ffffff;
-            padding: 25px;
-            width: 300px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .login h2 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .login input {
-            width: 100%;
-            padding: 10px;
-            margin: 8px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        .login button {
-            width: 100%;
-            padding: 10px;
-            background: #007bff;
-            border: none;
-            color: white;
-            font-size: 16px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .login button:hover {
-            background: #0056b3;
-        }
-
-        .show-password {
-            font-size: 14px;
-            margin-top: 5px;
-        }
-
-        .error {
-            color: red;
-            font-size: 14px;
-            text-align: center;
-        }
-    </style>
+<title>Login</title>
+<style>
+body { font-family: Arial; background:#f2f2f2; display:flex; justify-content:center; align-items:center; height:100vh; }
+.form-box { background:#fff; padding:20px; width:320px; border-radius:8px; box-shadow:0 0 10px gray; }
+h2 { text-align:center; }
+input { width:100%; padding:8px; margin:6px 0; }
+button { width:100%; padding:10px; background:green; color:white; border:none; }
+.msg { text-align:center; color:red; }
+</style>
 </head>
 <body>
 
-<div class="login">
-    <h2>Login</h2>
-    <p id="error" class="error"></p>
+<div class="form-box">
+<h2>Login</h2>
 
-    <input type="text" id="username" placeholder="Username">
-    <input type="password" id="password" placeholder="Password">
+<p class="msg"><?php echo $msg; ?></p>
 
-    <div class="show-password">
-        <input type="checkbox" onclick="togglePassword()"> Show Password
-    </div>
+<form method="post">
+    <input type="email" name="email" placeholder="Email" required>
+    <input type="password" name="password" placeholder="Password" required>
+    <button type="submit">Login</button>
+</form>
 
-    <button onclick="login()">Login</button>
 </div>
-
-<script>
-    function togglePassword() 
-    {
-        const passwordField = document.getElementById("password");
-        passwordField.type = passwordField.type === "password" ? "text" : "password";
-    }
-
-    function login() {
-        const username = document.getElementById("username").value.trim();
-        const password = document.getElementById("password").value.trim();
-        const error = document.getElementById("error");
-
-        if (username === "" || password === "") 
-        {
-            error.textContent = "Please fill in all fields";
-            return;
-        }
-
-        // Demo login logic
-        if (username === "admin" && password === "1234") {
-            alert("Login successful!");
-            error.textContent = "";
-        } else 
-        {
-            error.textContent = "Invalid username or password";
-        }
-    }
-</script>
 
 </body>
 </html>
