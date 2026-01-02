@@ -1,4 +1,5 @@
 <?php
+session_start();          // ✅ REQUIRED
 include "db.php";
 
 $msg = "";
@@ -7,26 +8,42 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $email    = trim($_POST["email"]);
     $password = trim($_POST["password"]);
+
     if (empty($email) || empty($password)) {
         $msg = "Please enter email and password";
     }
-    else if (strpos($email, "@") === false || strpos($email, ".com") === false) {
-        $msg = "Email must contain @ and .com";
+    else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $msg = "Invalid email format";
     }
     else {
-        $sql = "SELECT password FROM users WHERE email='$email'";
-        $result = mysqli_query($conn, $sql);
 
-        if (mysqli_num_rows($result) == 1) {
-            $row = mysqli_fetch_assoc($result);
+        /* ✅ SECURE QUERY */
+        $stmt = $conn->prepare("SELECT id, name, password FROM users WHERE email = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($row = $result->fetch_assoc()) {
+
             if (password_verify($password, $row["password"])) {
-                $msg = "Login successful!";
+
+                /* ✅ SET SESSION */
+                $_SESSION["user_id"]   = $row["id"];
+                $_SESSION["user_name"] = $row["name"];
+
+                /* ✅ REDIRECT */
+                header("Location: homepage.php");
+                exit();
+
             } else {
                 $msg = "Incorrect email or password";
             }
+
         } else {
             $msg = "Incorrect email or password";
         }
+
+        $stmt->close();
     }
 }
 ?>
@@ -65,8 +82,8 @@ button { width:100%; padding:10px; background:green; color:white; border:none; }
 <p class="msg"><?php echo $msg; ?></p>
 
 <form method="post" autocomplete="off">
-    <input type="email" name="email" placeholder="Email" autocomplete="off" value="">
-    <input type="password" name="password" placeholder="Password" value="" autocomplete="new-password">
+    <input type="email" name="email" placeholder="Email" required>
+    <input type="password" name="password" placeholder="Password" required>
     <button type="submit">Login</button>
 </form>
 
