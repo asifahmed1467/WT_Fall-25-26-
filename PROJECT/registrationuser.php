@@ -2,6 +2,7 @@
 include "db.php";
 
 $msg = "";
+$success = false;
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") 
 {
@@ -43,6 +44,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 
         if (mysqli_query($conn, $sql)) {
             $msg = "Registration successful!";
+            $success = true;
         } else {
             $msg = "Database Error!";
         }
@@ -94,6 +96,12 @@ button {
     text-align: center;
     margin-bottom: 10px;
 }
+.success {
+    color: green;
+    text-align: center;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
 </style>
 </head>
 
@@ -102,7 +110,9 @@ button {
 <div class="form-box">
 <h2>Registration</h2>
 
-<p class="error"><?php echo $msg; ?></p>
+<p class="<?php echo $success ? 'success' : 'error'; ?>">
+    <?php echo $msg; ?>
+</p>
 
 <form method="post" autocomplete="off">
     <input type="text" name="name" placeholder="Full Name" required value="">
