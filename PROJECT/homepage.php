@@ -6,33 +6,29 @@ $msg = "";
 $user_id = $_SESSION["user_id"] ?? 0;
 $user_name = $_SESSION["user_name"] ?? "";
 
-// Security check: Redirect if not logged in
 if ($user_id == 0) {
     header("Location: loginuser.php");
     exit();
 }
 
-// 1. Fetch Categories for the dropdown
 $cat_query = "SELECT * FROM crime_categories ORDER BY category_name ASC";
 $categories_result = mysqli_query($conn, $cat_query);
 
-// 2. Handle Post Submission (Procedural SQL)
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $content = mysqli_real_escape_string($conn, trim($_POST["content"]));
     $cat_id = mysqli_real_escape_string($conn, $_POST["category_id"] ?? "");
     $imageName = "";
 
-    // Directory check
     if (!is_dir("uploads")) { mkdir("uploads", 0777, true); }
 
-    // Image Upload Logic
     if (!empty($_FILES["image"]["name"])) {
         $imageName = time() . "_" . str_replace(" ", "_", basename($_FILES["image"]["name"]));
         move_uploaded_file($_FILES["image"]["tmp_name"], "uploads/" . $imageName);
     }
 
     if ($content != "" && !empty($cat_id)) {
-        // Procedural Insert
+
         $sql = "INSERT INTO posts (user_id, content, category_id, image, status) 
                 VALUES ('$user_id', '$content', '$cat_id', '$imageName', 'Pending')";
         
@@ -45,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-// 3. Fetch Posts with JOINs
+
 $sql_fetch = "SELECT posts.*, users.name, crime_categories.category_name 
               FROM posts 
               LEFT JOIN users ON posts.user_id = users.id 
@@ -54,7 +50,6 @@ $sql_fetch = "SELECT posts.*, users.name, crime_categories.category_name
 
 $posts = mysqli_query($conn, $sql_fetch);
 
-// Error Handling to prevent the Fatal Error shown in your screenshot
 if (!$posts) {
     die("Database Error: " . mysqli_error($conn));
 }
@@ -65,18 +60,18 @@ if (!$posts) {
 <head>
     <title>Dashboard | Crime Detection</title>
     <style>
-        /* Modern Layout without Bootstrap */
+
         body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f7f6; margin: 0; display: flex; }
         .sidebar { width: 240px; background: #1a252f; color: white; height: 100vh; position: fixed; padding: 25px; box-sizing: border-box; }
         .main { margin-left: 240px; padding: 30px; width: 100%; max-width: 800px; }
         
         .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 25px; }
         
-        /* Form Elements */
+
         textarea, select { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
         .btn-red { background: #e74c3c; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; }
         
-        /* Post Feed Styling */
+ 
         .post-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .author { font-weight: bold; font-size: 1.1rem; color: #2c3e50; }
         .tag { background: #3498db; color: white; padding: 4px 12px; border-radius: 20px; font-size: 11px; text-transform: uppercase; }
@@ -104,7 +99,7 @@ if (!$posts) {
             <textarea name="content" rows="3" placeholder="What happened? Provide details..."></textarea>
             
             <select name="category_id" required>
-                <option value="">-- Select Crime Category --</option>
+                <option value=""> Select Crime Category </option>
                 <?php while($cat = mysqli_fetch_assoc($categories_result)): ?>
                     <option value="<?php echo $cat['id']; ?>"><?php echo htmlspecialchars($cat['category_name']); ?></option>
                 <?php endwhile; ?>
