@@ -87,6 +87,7 @@ $reports = mysqli_query($conn, $sql);
     <a href="logout.php" class="nav-btn" style="margin-top:40px; background:#c0392b;">Logout</a>
 </div>
 
+
 <div class="main">
     <h2 style="color: #2c3e50;">Welcome, <?php echo htmlspecialchars($user_name); ?></h2>
 
@@ -113,6 +114,17 @@ $reports = mysqli_query($conn, $sql);
         </div>
         <span style="font-size: 12px; color: #888;">Filter reports by their current status</span>
     </div>
+    
+    <div class="profile-card">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h3>Account Information</h3>
+        <a href="update_profile.php" class="btn-edit">Edit Profile ⚙️</a>
+    </div>
+    <p><strong>Name:</strong> <?php echo htmlspecialchars($user_name); ?></p>
+    <p><strong>Email:</strong> <?php echo htmlspecialchars($user_data['email']); ?></p>
+    <p><strong>Location:</strong> <?php echo $user_data['district'] . ", " . $user_data['division']; ?></p>
+    <p><strong>Phone:</strong> <?php echo htmlspecialchars($user_data['phone']); ?></p>
+</div>
 
     
 
