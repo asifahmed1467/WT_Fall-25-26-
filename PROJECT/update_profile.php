@@ -8,7 +8,6 @@ if ($user_id == 0) {
     exit(); 
 }
 
-
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['ajax_update'])) {
     $name     = mysqli_real_escape_string($conn, $_POST['name']);
     $phone    = mysqli_real_escape_string($conn, $_POST['phone']);
@@ -48,7 +47,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['ajax_password'])) {
     exit();
 }
 
-
 $query = mysqli_query($conn, "SELECT * FROM users WHERE id = '$user_id'");
 $user = mysqli_fetch_assoc($query);
 ?>
@@ -63,17 +61,13 @@ $user = mysqli_fetch_assoc($query);
         .sidebar h2 { color: #e74c3c; margin-top: 0; font-size: 1.2rem; }
         .nav-btn { display: block; background: #34495e; color: white; text-decoration: none; padding: 12px; margin-top: 10px; border-radius: 6px; font-size: 14px; text-align: center; transition: 0.3s; }
         .nav-btn:hover { background: #e74c3c; }
-
         .main { margin-left: 220px; padding: 40px; width: 100%; display: flex; flex-direction: column; align-items: center; }
         .edit-card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 500px; margin-bottom: 25px; }
-        
         .input-group { margin-bottom: 15px; }
         label { display: block; font-size: 13px; color: #666; margin-bottom: 5px; font-weight: bold; }
         input, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
-        
         .btn-save { width: 100%; padding: 12px; background: #e74c3c; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.3s; }
         .btn-save:hover { background: #c0392b; }
-
         .response-box { padding: 10px; margin-top: 15px; border-radius: 5px; text-align: center; display: none; font-size: 14px; }
     </style>
 </head>
@@ -109,7 +103,7 @@ $user = mysqli_fetch_assoc($query);
                 <select id="division" onchange="loadDistricts()">
                     <option value="">Select Division</option>
                     <?php 
-                    $divisions = ["Dhaka", "Chattogram", "Rajshahi", "Khulna", "Barishal", "Sylhet", "Rangpur", "Mymensingh"];
+                    $divisions = ["Barishal", "Chattogram", "Dhaka", "Khulna", "Mymensingh", "Rajshahi", "Rangpur", "Sylhet"];
                     foreach($divisions as $d) {
                         $sel = ($user['division'] == $d) ? "selected" : "";
                         echo "<option value='$d' $sel>$d</option>";
@@ -120,7 +114,7 @@ $user = mysqli_fetch_assoc($query);
             <div class="input-group">
                 <label>District</label>
                 <select id="district">
-                    <option value=""><?php echo htmlspecialchars($user['district']); ?></option>
+                    <option value="">Select District</option>
                 </select>
             </div>
             <button type="button" onclick="saveProfile()" class="btn-save">Update Profile</button>
@@ -145,21 +139,22 @@ $user = mysqli_fetch_assoc($query);
     </div>
 </div>
 
-
-
 <script>
-
 function loadDistricts() {
     var div = document.getElementById("division").value;
     var dist = document.getElementById("district");
     dist.innerHTML = "<option value=''>Select District</option>";
     var list = [];
     
-    if (div == "Dhaka") list = ["Dhaka", "Gazipur", "Tangail", "Narayanganj", "Manikganj"];
-    else if (div == "Chattogram") list = ["Chattogram", "Cox's Bazar", "Cumilla", "Feni"];
-    else if (div == "Rajshahi") list = ["Rajshahi", "Bogura", "Pabna", "Sirajganj"];
-  
-    
+    if (div == "Barishal") list = ["Barguna", "Barishal", "Bhola", "Jhalokati", "Patuakhali", "Pirojpur"];
+    else if (div == "Chattogram") list = ["Bandarban", "Brahmanbaria", "Chandpur", "Chattogram", "Cumilla", "Cox's Bazar", "Feni", "Khagrachhari", "Lakshmipur", "Noakhali", "Rangamati"];
+    else if (div == "Dhaka") list = ["Dhaka", "Faridpur", "Gazipur", "Gopalganj", "Kishoreganj", "Madaripur", "Manikganj", "Munshiganj", "Narayanganj", "Narsingdi", "Rajbari", "Shariatpur", "Tangail"];
+    else if (div == "Khulna") list = ["Bagerhat", "Chuadanga", "Jessore", "Jhenaidah", "Khulna", "Kushtia", "Magura", "Meherpur", "Narail", "Satkhira"];
+    else if (div == "Mymensingh") list = ["Jamalpur", "Mymensingh", "Netrokona", "Sherpur"];
+    else if (div == "Rajshahi") list = ["Bogra", "Chapai Nawabganj", "Joypurhat", "Naogaon", "Natore", "Pabna", "Rajshahi", "Sirajganj"];
+    else if (div == "Rangpur") list = ["Dinajpur", "Gaibandha", "Kurigram", "Lalmonirhat", "Nilphamari", "Panchagarh", "Rangpur", "Thakurgaon"];
+    else if (div == "Sylhet") list = ["Habiganj", "Moulvibazar", "Sunamganj", "Sylhet"];
+
     list.forEach(function(d) {
         var opt = document.createElement("option");
         opt.value = d; opt.text = d;
