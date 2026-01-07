@@ -74,6 +74,21 @@ $reports = mysqli_query($conn, $sql);
         
         .view-link { color: #e74c3c; text-decoration: none; font-size: 12px; font-weight: bold; }
         .view-link:hover { text-decoration: underline; }
+        .btn-edit {
+    background: #34495e;
+    color: white;
+    text-decoration: none;
+    padding: 8px 15px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-edit:hover 
+{
+    background: #e74c3c;
+}
     </style>
 </head>
 <body>
@@ -114,7 +129,7 @@ $reports = mysqli_query($conn, $sql);
         </div>
         <span style="font-size: 12px; color: #888;">Filter reports by their current status</span>
     </div>
-    
+
     <div class="profile-card">
     <div style="display: flex; justify-content: space-between; align-items: center;">
         <h3>Account Information</h3>
