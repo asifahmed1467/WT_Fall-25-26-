@@ -43,7 +43,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_post'])) {
     }
 }
 
-
 $sql_fetch = "SELECT posts.*, users.name, crime_categories.category_name 
               FROM posts 
               LEFT JOIN users ON posts.user_id = users.id 
@@ -73,6 +72,10 @@ $posts = mysqli_query($conn, $sql_fetch);
         
         .sidebar { width: 220px; background: #1a252f; color: white; height: 100vh; position: fixed; padding: 25px; box-sizing: border-box; }
         .sidebar h2 { color: #e74c3c; margin-top: 0; font-size: 1.2rem; }
+        
+        .nav-btn { display: block; background: #34495e; color: white; text-decoration: none; padding: 12px; margin-top: 10px; border-radius: 6px; font-size: 14px; transition: 0.3s; text-align: center; }
+        .nav-btn:hover { background: #e74c3c; }
+        
         .logout-link { display: block; margin-top: 30px; color: #bdc3c7; text-decoration: none; font-size: 14px; border: 1px solid #444; padding: 8px; text-align: center; border-radius: 4px; }
 
         .chat-sidebar { width: 320px; background: #fff; height: 100vh; position: fixed; right: 0; border-left: 1px solid #ddd; display: flex; flex-direction: column; }
@@ -109,7 +112,8 @@ $posts = mysqli_query($conn, $sql_fetch);
     <h2>CRIME REPORT</h2>
     <p style="font-size:14px;">Logged in as:<br><strong><?php echo htmlspecialchars($user_name); ?></strong></p>
     <hr style="border: 0.5px solid #34495e;">
-    <a href="homepage.php" style="color:white; text-decoration:none; display:block; margin-top:10px;">Dashboard</a>
+    <a href="homepage.php" class="nav-btn">Dashboard</a>
+    <a href="profile.php" class="nav-btn">My Profile</a>
     <a href="logout.php" class="logout-link">→ Logout</a>
 </div>
 
@@ -191,7 +195,6 @@ $posts = mysqli_query($conn, $sql_fetch);
 </div>
 
 <script>
-
 function fetchChat() {
     var xhr = new XMLHttpRequest();
     xhr.open("GET", "chat_handler.php", true);
@@ -202,7 +205,6 @@ function fetchChat() {
                 var box = document.getElementById("chat-box");
                 var html = "";
                 data.forEach(function(m) {
-
                     html += "<div class='msg-bubble'>" +
                             "<b>" + m.name + ":</b>" +
                             "<span>" + m.message + "</span>" +
