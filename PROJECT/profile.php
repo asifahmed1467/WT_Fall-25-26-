@@ -28,9 +28,11 @@ $sql = "SELECT posts.*, crime_categories.category_name
         LEFT JOIN crime_categories ON posts.category_id = crime_categories.id 
         WHERE user_id = '$user_id'";
 
-if ($filter == 'Pending') {
+if ($filter == 'Pending') 
+{
     $sql .= " AND status = 'Pending'";
-} elseif ($filter == 'Resolved') {
+} elseif ($filter == 'Resolved') 
+{
     $sql .= " AND status = 'Resolved'";
 }
 
@@ -83,6 +85,7 @@ $reports = mysqli_query($conn, $sql);
     <hr style="border: 0; border-top: 1px solid #34495e; margin: 20px 0;">
     <a href="homepage.php" class="nav-btn">Dashboard</a>
     <a href="profile.php" class="nav-btn active-btn">My Profile</a>
+    <a href="profile.php?mode=delete" class="nav-btn" style="background:#8e44ad;">Delete Reports</a>
     <a href="logout.php" class="nav-btn" style="margin-top:40px; background:#c0392b;">Logout</a>
 </div>
 
@@ -157,15 +160,10 @@ $reports = mysqli_query($conn, $sql);
 <script>
 function editContent(postId) 
 {
-
     var currentText = document.getElementById("desc-" + postId).innerText.trim();
-    
- 
     var newText = prompt("Update your post", currentText);
     
-
     if (newText == null || newText == "" || newText == currentText) return;
-
 
     var xhr = new XMLHttpRequest();
     xhr.open("POST", "manage_post.php", true);
