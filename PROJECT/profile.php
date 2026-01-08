@@ -72,6 +72,9 @@ $reports = mysqli_query($conn, $sql_list);
         .delete-btn-sidebar:hover { background: #a93226; }
         .main { margin-left: 250px; padding: 40px; width: 100%; box-sizing: border-box; }
         .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 30px; }
+        .profile-header { display: flex; justify-content: space-between; align-items: center; }
+        .edit-profile-btn { background: #3498db; color: white; text-decoration: none; padding: 8px 15px; border-radius: 6px; font-size: 13px; font-weight: bold; transition: 0.3s; }
+        .edit-profile-btn:hover { background: #2980b9; }
         .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px; }
         .stat-card { background: white; padding: 20px; border-radius: 12px; text-align: center; border-bottom: 4px solid #ddd; }
         table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; }
@@ -94,11 +97,23 @@ $reports = mysqli_query($conn, $sql_list);
     <h2>CRIME REPORT</h2>
     <a href="homepage.php" class="nav-btn">Dashboard</a>
     <a href="profile.php" class="nav-btn <?php echo ($mode == 'view' && !$editPost) ? 'active-btn' : ''; ?>">My Profile</a>
+    <a href="update_profile.php" class="nav-btn">⚙️ Edit Profile</a>
     <a href="profile.php?mode=delete" class="nav-btn delete-btn-sidebar <?php echo ($mode == 'delete') ? 'active-btn' : ''; ?>">Delete Reports</a>
     <a href="logout.php" class="nav-btn" style="margin-top:40px; background:#c0392b;">Logout</a>
 </div>
 
 <div class="main">
+    <div class="card">
+        <div class="profile-header">
+            <h3>Account Information</h3>
+            <a href="update_profile.php" class="edit-profile-btn">Edit Profile Settings ⚙️</a>
+        </div>
+        <p><strong>Name:</strong> <?php echo htmlspecialchars($user_name); ?></p>
+        <p><strong>Email:</strong> <?php echo htmlspecialchars($user_data['email'] ?? 'N/A'); ?></p>
+        <p><strong>Location:</strong> <?php echo htmlspecialchars($user_data['district'] ?? '') . ", " . htmlspecialchars($user_data['division'] ?? ''); ?></p>
+        <p><strong>Phone:</strong> <?php echo htmlspecialchars($user_data['phone'] ?? 'N/A'); ?></p>
+    </div>
+
     <?php if ($editPost): ?>
     <div class="card" style="border: 2px solid #3498db;">
         <h3>Update Report #<?php echo $editPost['id']; ?></h3>
@@ -110,8 +125,6 @@ $reports = mysqli_query($conn, $sql_list);
         </form>
     </div>
     <?php endif; ?>
-
-   
 
     <div class="stats-grid">
         <div class="stat-card" style="border-color: #3498db;"><p>Total</p><h1><?php echo $total_stats; ?></h1></div>
@@ -134,21 +147,25 @@ $reports = mysqli_query($conn, $sql_list);
                 </tr>
             </thead>
             <tbody>
-                <?php while($row = mysqli_fetch_assoc($reports)): ?>
-                <tr>
-                    <td><?php echo date('d M Y', strtotime($row['created_at'])); ?></td>
-                    <td><strong><?php echo htmlspecialchars($row['category_name'] ?? 'General'); ?></strong></td>
-                    <td><?php echo htmlspecialchars($row['content']); ?></td>
-                    <td><span class="status-badge <?php echo $row['status']; ?>"><?php echo $row['status']; ?></span></td>
-                    <td>
-                        <?php if ($mode == 'delete'): ?>
-                            <a href="?delete=<?php echo $row['id']; ?>" class="btn-del" onclick="return confirm('Are you sure?')">Confirm Delete</a>
-                        <?php else: ?>
-                            <a href="?edit=<?php echo $row['id']; ?>" class="btn-edit">Edit</a>
-                        <?php endif; ?>
-                    </td>
-                </tr>
-                <?php endwhile; ?>
+                <?php if(mysqli_num_rows($reports) > 0): ?>
+                    <?php while($row = mysqli_fetch_assoc($reports)): ?>
+                    <tr>
+                        <td><?php echo date('d M Y', strtotime($row['created_at'])); ?></td>
+                        <td><strong><?php echo htmlspecialchars($row['category_name'] ?? 'General'); ?></strong></td>
+                        <td><?php echo htmlspecialchars($row['content']); ?></td>
+                        <td><span class="status-badge <?php echo $row['status']; ?>"><?php echo $row['status']; ?></span></td>
+                        <td>
+                            <?php if ($mode == 'delete'): ?>
+                                <a href="?delete=<?php echo $row['id']; ?>" class="btn-del" onclick="return confirm('Are you sure?')">Confirm Delete</a>
+                            <?php else: ?>
+                                <a href="?edit=<?php echo $row['id']; ?>" class="btn-edit">Edit</a>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                    <?php endwhile; ?>
+                <?php else: ?>
+                    <tr><td colspan="5" style="text-align: center; color: #999; padding: 30px;">No reports found.</td></tr>
+                <?php endif; ?>
             </tbody>
         </table>
     </div>
