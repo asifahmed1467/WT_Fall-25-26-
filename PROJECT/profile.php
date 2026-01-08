@@ -168,7 +168,8 @@ function editContent(postId)
     var xhr = new XMLHttpRequest();
     xhr.open("POST", "manage_post.php", true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xhr.onreadystatechange = function() {
+    xhr.onreadystatechange = function() 
+    {
         if (xhr.readyState == 4 && xhr.status == 200) //200 successful
             {
             var res = JSON.parse(xhr.responseText);
@@ -182,6 +183,27 @@ function editContent(postId)
         }
     };
     xhr.send("action=update&post_id=" + postId + "&content=" + encodeURIComponent(newText));
+}
+function deletePost(postId) {
+    if (!confirm("Are you sure you want to permanently delete this report?")) return;
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "manage_post.php", true);
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            var res = JSON.parse(xhr.responseText);
+            if (res.status == "success") 
+            {
+                var row = document.getElementById("row-" + postId);
+                row.parentNode.removeChild(row);
+                alert("Post deleted successfully.");
+            } else {
+                alert("Error: " + res.message);
+            }
+        }
+    };
+    xhr.send("action=delete&post_id=" + postId);
 }
 </script>
 
