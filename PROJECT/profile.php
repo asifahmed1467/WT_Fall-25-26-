@@ -71,7 +71,6 @@ $reports = mysqli_query($conn, $sql);
         .Pending { background: #fff3cd; color: #856404; }
         .Resolved { background: #d4edda; color: #155724; }
         .view-link { color: #3498db; text-decoration: none; font-size: 12px; font-weight: bold; }
-        /* Action Button Style */
         .action-edit { background: #27ae60; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; }
         .action-edit:hover { background: #219150; }
     </style>
@@ -155,6 +154,38 @@ $reports = mysqli_query($conn, $sql);
     </div>
 </div>
 
+<script>
+function editContent(postId) 
+{
+
+    var currentText = document.getElementById("desc-" + postId).innerText.trim();
+    
+ 
+    var newText = prompt("Update your post", currentText);
+    
+
+    if (newText == null || newText == "" || newText == currentText) return;
+
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "manage_post.php", true);
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4 && xhr.status == 200) //200 successful
+            {
+            var res = JSON.parse(xhr.responseText);
+            if (res.status == "success") {
+
+                document.getElementById("desc-" + postId).innerText = newText;
+                alert("Updated successfully!");
+            } else {
+                alert("Error: " + res.message);
+            }
+        }
+    };
+    xhr.send("action=update&post_id=" + postId + "&content=" + encodeURIComponent(newText));
+}
+</script>
 
 
 </body>
