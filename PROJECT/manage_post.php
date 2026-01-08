@@ -3,30 +3,32 @@ session_start();
 include "db.php";
 
 $user_id = $_SESSION["user_id"] ?? 0;
+if ($user_id == 0) exit();
 
-if ($user_id == 0) {
-    echo json_encode(["status" => "error", "message" => "Session expired"]);
-    exit();
-}
-
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] == 'update') 
-    {
-    
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $action = $_POST['action'] ?? '';
     $post_id = mysqli_real_escape_string($conn, $_POST['post_id']);
-    $new_content = mysqli_real_escape_string($conn, $_POST['content']);
 
-    $check_query = "SELECT id FROM posts WHERE id = '$post_id' AND user_id = '$user_id'";
-    $check_result = mysqli_query($conn, $check_query);
+    $check = mysqli_query($conn, "SELECT id FROM posts WHERE id='$post_id' AND user_id='$user_id'");
+    if (mysqli_num_rows($check) == 0) {
+        echo json_encode(["status" => "error", "message" => "Unauthorized"]);
+        exit();
+    }
 
-    if (mysqli_num_rows($check_result) > 0) {
-        $update_query = "UPDATE posts SET content = '$new_content' WHERE id = '$post_id'";
-        
-        if (mysqli_query($conn, $update_query)) {
-            echo json_encode(["status" => "success", "message" => "Post updated successfully"]);
-        } else {
-            echo json_encode(["status" => "error", "message" => "Database update failed"]);
+    if ($action == 'delete') {
+        $query = "DELETE FROM posts WHERE id='$post_id'";
+        if (mysqli_query($conn, $query)) 
+        {
+            echo json_encode(["status" => "success"]);
         }
     } 
+    elseif ($action == 'update') {
+        $content = mysqli_real_escape_string($conn, $_POST['content']);
+        $query = "UPDATE posts SET content='$content' WHERE id='$post_id'";
+        if (mysqli_query($conn, $query)) {
+            echo json_encode(["status" => "success"]);
+        }
+    }
     exit();
 }
 ?>
