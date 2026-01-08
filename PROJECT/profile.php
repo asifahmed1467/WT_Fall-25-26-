@@ -12,6 +12,9 @@ if ($user_id == 0) {
 
 $filter = $_GET['filter'] ?? 'All';
 
+$user_q = mysqli_query($conn, "SELECT * FROM users WHERE id = '$user_id'");
+$user_data = mysqli_fetch_assoc($user_q);
+
 $total_q = mysqli_query($conn, "SELECT COUNT(*) as count FROM posts WHERE user_id = '$user_id'");
 $pending_q = mysqli_query($conn, "SELECT COUNT(*) as count FROM posts WHERE user_id = '$user_id' AND status = 'Pending'");
 $resolved_q = mysqli_query($conn, "SELECT COUNT(*) as count FROM posts WHERE user_id = '$user_id' AND status = 'Resolved'");
@@ -51,6 +54,10 @@ $reports = mysqli_query($conn, $sql);
 
         .main { margin-left: 220px; padding: 40px; width: 100%; box-sizing: border-box; }
         
+        .profile-card { background: white; padding: 20px 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 30px; }
+        .btn-edit { background: #34495e; color: white; text-decoration: none; padding: 8px 15px; border-radius: 6px; font-size: 13px; font-weight: bold; transition: 0.3s; }
+        .btn-edit:hover { background: #e74c3c; }
+
         .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px; }
         .stat-card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-align: center; border-bottom: 4px solid #ddd; }
         .stat-card h1 { margin: 10px 0; color: #2c3e50; font-size: 2.2rem; }
@@ -73,22 +80,6 @@ $reports = mysqli_query($conn, $sql);
         .Resolved { background: #d4edda; color: #155724; }
         
         .view-link { color: #e74c3c; text-decoration: none; font-size: 12px; font-weight: bold; }
-        .view-link:hover { text-decoration: underline; }
-        .btn-edit {
-    background: #34495e;
-    color: white;
-    text-decoration: none;
-    padding: 8px 15px;
-    border-radius: 6px;
-    font-size: 13px;
-    font-weight: bold;
-    transition: 0.3s;
-}
-
-.btn-edit:hover 
-{
-    background: #e74c3c;
-}
     </style>
 </head>
 <body>
@@ -102,9 +93,56 @@ $reports = mysqli_query($conn, $sql);
     <a href="logout.php" class="nav-btn" style="margin-top:40px; background:#c0392b;">Logout</a>
 </div>
 
-
 <div class="main">
-    <h2 style="color: #2c3e50;">Welcome, <?php echo htmlspecialchars($user_name); ?></h2>
+    <div class="profile-card">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h3>Account Information</h3>
+            <a href="update_profile.php" class="btn-edit">Edit Profile ⚙️</a>
+        </div>
+
+        <div class="main-content">
+    <h3>My Reported Crimes</h3>
+    
+    <?php
+
+    $query = "SELECT * FROM reports WHERE user_id = '$user_id' ORDER BY id DESC";
+    $result = mysqli_query($conn, $query);
+
+    if (mysqli_num_rows($result) > 0) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            ?>
+            
+            <div class="post-card" id="post-<?php echo $row['id']; ?>" style="background: white; padding: 20px; margin-bottom: 15px; border-radius: 10px; shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                
+                <span style="font-size: 12px; color: #888;">Report ID: #<?php echo $row['id']; ?></span>
+                <p style="font-size: 16px; color: #333;">
+                    <?php echo htmlspecialchars($row['description']); ?>
+                </p>
+
+                <div class="actions" style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px;">
+                    <button onclick="editPost(<?php echo $row['id']; ?>, '<?php echo addslashes($row['description']); ?>')" 
+                            style="background: #3498db; color: white; border: none; padding: 5px 15px; border-radius: 4px; cursor: pointer;">
+                        Edit
+                    </button>
+                    
+                    <button onclick="deletePost(<?php echo $row['id']; ?>)" 
+                            style="background: #e74c3c; color: white; border: none; padding: 5px 15px; border-radius: 4px; cursor: pointer; margin-left: 10px;">
+                        Delete
+                    </button>
+                </div>
+            </div>
+            <?php
+        }
+    } else {
+        echo "<p>You haven't posted any reports yet.</p>";
+    }
+    ?>
+</div>
+        <p><strong>Name:</strong> <?php echo htmlspecialchars($user_name); ?></p>
+        <p><strong>Email:</strong> <?php echo htmlspecialchars($user_data['email']); ?></p>
+        <p><strong>Location:</strong> <?php echo $user_data['district'] . ", " . $user_data['division']; ?></p>
+        <p><strong>Phone:</strong> <?php echo htmlspecialchars($user_data['phone']); ?></p>
+    </div>
 
     <div class="stats-grid">
         <div class="stat-card total-card">
@@ -127,21 +165,8 @@ $reports = mysqli_query($conn, $sql);
             <a href="profile.php?filter=Pending" class="<?php echo $filter == 'Pending' ? 'active-filter' : ''; ?>">Pending</a>
             <a href="profile.php?filter=Resolved" class="<?php echo $filter == 'Resolved' ? 'active-filter' : ''; ?>">Resolved</a>
         </div>
-        <span style="font-size: 12px; color: #888;">Filter reports by their current status</span>
+        <span style="font-size: 12px; color: #888;">Manage your personal alerts</span>
     </div>
-
-    <div class="profile-card">
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-        <h3>Account Information</h3>
-        <a href="update_profile.php" class="btn-edit">Edit Profile ⚙️</a>
-    </div>
-    <p><strong>Name:</strong> <?php echo htmlspecialchars($user_name); ?></p>
-    <p><strong>Email:</strong> <?php echo htmlspecialchars($user_data['email']); ?></p>
-    <p><strong>Location:</strong> <?php echo $user_data['district'] . ", " . $user_data['division']; ?></p>
-    <p><strong>Phone:</strong> <?php echo htmlspecialchars($user_data['phone']); ?></p>
-</div>
-
-    
 
     <div class="table-card">
         <table>
@@ -184,7 +209,7 @@ $reports = mysqli_query($conn, $sql);
                 <?php else: ?>
                     <tr>
                         <td colspan="5" style="text-align: center; padding: 50px; color: #999;">
-                            You haven't submitted any reports yet.
+                            No contributions found.
                         </td>
                     </tr>
                 <?php endif; ?>
