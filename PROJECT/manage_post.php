@@ -9,7 +9,8 @@ if ($user_id == 0) {
     exit();
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] == 'update') {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] == 'update') 
+    {
     
     $post_id = mysqli_real_escape_string($conn, $_POST['post_id']);
     $new_content = mysqli_real_escape_string($conn, $_POST['content']);
@@ -25,9 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
         } else {
             echo json_encode(["status" => "error", "message" => "Database update failed"]);
         }
-    } else {
-        echo json_encode(["status" => "error", "message" => "Unauthorized: You do not own this post"]);
-    }
+    } 
     exit();
 }
 ?>
