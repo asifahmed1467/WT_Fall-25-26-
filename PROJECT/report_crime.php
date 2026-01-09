@@ -122,7 +122,7 @@ if (isset($_POST['submit_report'])) {
     </div>
 </div>
 
-
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBsnn0ZmcSODM68Vx2LBCHp3MvpKKXR_kQ&callback=initMap" async defer></script>
 
 </body>
 </html>
